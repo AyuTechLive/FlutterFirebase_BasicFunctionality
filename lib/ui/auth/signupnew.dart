@@ -1,26 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:testappfirebase/Courses/allcourses.dart';
-import 'package:testappfirebase/ui/auth/loginwithphoneno.dart';
-import 'package:testappfirebase/ui/auth/signup.dart';
-import 'package:testappfirebase/ui/auth/signupnew.dart';
-import 'package:testappfirebase/ui/posts/post_screen.dart';
+import 'package:testappfirebase/ui/auth/login_screen.dart';
 import 'package:testappfirebase/utils/utils.dart';
 import 'package:testappfirebase/widgets/round_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpNew extends StatefulWidget {
+  const SignUpNew({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpNew> createState() => _SignUpNewState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpNewState extends State<SignUpNew> {
+  bool loading = false;
   final _formfield = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
 
-  final _auth = FirebaseAuth.instance;
+  // final databaseref = FirebaseDatabase.instance;
+  var username = '';
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  final fireStore = FirebaseFirestore.instance.collection('Users');
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -29,32 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordcontroller.dispose();
   }
 
-  void login() {
-    _auth // login succesful to then function mei chala jayega warna on error mei chala jayegaa
-        .signInWithEmailAndPassword(
-            email: emailcontroller.text.toString(),
-            password: passwordcontroller.text.toString())
-        .then(
-      (value) {
-        Utils().toastMessage('Login succesful');
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AllCoursesScreen(),
-            ));
-      },
-    ).onError(
-      (error, stackTrace) {
-        Utils().toastMessage(error.toString());
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('SignUp'),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
@@ -99,10 +82,41 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 )),
             RoundButton(
-              title: 'Login',
+              title: 'SignUp',
+              loading: loading,
               onTap: () {
                 if (_formfield.currentState!.validate()) {
-                  login();
+                  setState(() {
+                    loading = true;
+                  });
+
+                  _auth
+                      .createUserWithEmailAndPassword(
+                    email: emailcontroller.text.toString(),
+                    password: passwordcontroller.text.toString(),
+                  )
+                      .then((value) {
+                    String id = emailcontroller.text.toString();
+                    fireStore.doc(id).set({
+                      'Email':emailcontroller.text.toString(),
+                      'Password':passwordcontroller.text.toString(),
+                      'UID':DateTime.now().microsecondsSinceEpoch.toString(),
+                      'My Courses':['Course1','Course2','Course3']
+                    }).then((value) {
+                      setState(() {
+                      loading = false;
+                    });
+                    },);
+
+                   
+                  }).onError(
+                    (error, stackTrace) {
+                      Utils().toastMessage(error.toString());
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                  );
                 }
               },
             ),
@@ -112,34 +126,17 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Dont have an account?"),
+                Text("Already Have An Account?"),
                 TextButton(
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SignUpNew(),
+                            builder: (context) => LoginScreen(),
                           ));
                     },
-                    child: Text('Sign Up')),
+                    child: Text('Login'))
               ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context) => LoginWithPhoneNo(),));
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: Colors.black)),
-                child: Center(
-                  child: Text('Login With Phone No'),
-                ),
-              ),
             )
           ],
         ),
