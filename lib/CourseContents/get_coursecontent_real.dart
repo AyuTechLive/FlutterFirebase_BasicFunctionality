@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:testappfirebase/CourseContents/add_coursecontents_real.dart';
 import 'package:testappfirebase/ui/auth/login_screen.dart';
 import 'package:testappfirebase/ui/posts/add_post.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:testappfirebase/utils/utils.dart';
 
-class PostScreen extends StatefulWidget {
-  const PostScreen({super.key});
+class GetCourseContents extends StatefulWidget {
+  const GetCourseContents({super.key});
 
   @override
-  State<PostScreen> createState() => _PostScreenState();
+  State<GetCourseContents> createState() => _GetCourseContentsState();
 }
 
-class _PostScreenState extends State<PostScreen> {
+class _GetCourseContentsState extends State<GetCourseContents> {
   final auth = FirebaseAuth.instance;
-  final ref = FirebaseDatabase.instance.ref('Post');
+  final ref = FirebaseDatabase.instance
+      .ref('Course1')
+      .child('SUBJECTS')
+      .child('Business Administration')
+      .child('Videos');
+  // .child('Lec 1');
+  //  .child('Title');
   final searchFiltercontroller = TextEditingController();
   final editcontroller = TextEditingController();
+@override
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Post Screen'),
+        title: Text('Get Course Contents'),
         actions: [
           IconButton(
               onPressed: () {
@@ -42,10 +51,11 @@ class _PostScreenState extends State<PostScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+         
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddPostScreen(),
+                builder: (context) => AddCourseContentRealTime(),
               ));
         },
         child: Icon(Icons.add),
@@ -65,7 +75,8 @@ class _PostScreenState extends State<PostScreen> {
                 setState(() {});
               },
             ),
-          )
+          ),
+          
 
           // Expanded(
           //     child: StreamBuilder(
@@ -81,7 +92,7 @@ class _PostScreenState extends State<PostScreen> {
           //         itemCount: snapshot.data!.snapshot.children.length,
           //         itemBuilder: (context, index) {
           //           return ListTile(
-          //             title: Text(list[index]['title']),
+          //             title: Text(list[index]['Title']),
           //           );
           //         },
           //       );
@@ -90,49 +101,22 @@ class _PostScreenState extends State<PostScreen> {
           //     }
           //   },
           // )),
-          ,
+
           Expanded(
             child: FirebaseAnimatedList(
               query: ref,
               itemBuilder: (context, snapshot, animation, index) {
-                final title = snapshot.child('title').value.toString();
+                final title = snapshot.value.toString();
                 if (searchFiltercontroller.text.isEmpty) {
                   return ListTile(
-                      title: Text(snapshot.child('title').value.toString()),
-                      subtitle: Text(snapshot.child('id').value.toString()),
-                      trailing: PopupMenuButton(
-                        icon: Icon(Icons.more_vert),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                              value: 1,
-                              onTap: () {
-                                // Navigator.pop(context);
-                                showMyDialouge(
-                                    snapshot.child('title').value.toString(),
-                                    snapshot.child('id').value.toString());
-                              },
-                              child: ListTile(
-                                leading: Icon(Icons.edit),
-                                title: Text('Edit'),
-                              )),
-                          PopupMenuItem(
-                              value: 2,
-                              child: ListTile(
-                                onTap: () {
-                                  ref
-                                      .child(
-                                          snapshot.child('id').value.toString())
-                                      .remove();
-                                },
-                                leading: Icon(Icons.delete_outline),
-                                title: Text('Delete'),
-                              ))
-                        ],
-                      ));
+                    title: Text(snapshot.child('Title').value.toString()),
+                    subtitle:
+                        Text(snapshot.child('Video Link').value.toString()),
+                  );
                 } else if (title.toLowerCase().contains(
                     searchFiltercontroller.text.toLowerCase().toString())) {
                   return ListTile(
-                    title: Text(snapshot.child('title').value.toString()),
+                    title: Text(snapshot.child('Title').value.toString()),
                   );
                 } else {
                   return Container();
@@ -143,6 +127,40 @@ class _PostScreenState extends State<PostScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> fetchAllUsers() async {
+    DatabaseReference usersRef = FirebaseDatabase.instance
+        .ref('Course1')
+        .child('SUBJECTS')
+        .child('Business Administration');
+
+    try {
+      DatabaseEvent event = await usersRef.once();
+      DataSnapshot snapshot = event.snapshot;
+
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic>? usersMap =
+            snapshot.value as Map<dynamic, dynamic>?;
+
+        if (usersMap != null) {
+          usersMap.forEach((key, value) {
+            return key;
+            // print('User ID: $key');
+            // if (value is Map<dynamic, dynamic>) {
+            //   value.forEach((key, value) {
+            //     print('$key: $value');
+            //   });
+            // }
+            // print('---------------');
+          });
+        }
+      } else {
+        print('No users found');
+      }
+    } catch (error) {
+      print('Error fetching users: $error');
+    }
   }
 
   Future<void> showMyDialouge(String title, String id) async {
@@ -165,21 +183,22 @@ class _PostScreenState extends State<PostScreen> {
                 },
                 child: Text('Cancel')),
             TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  ref
-                      .child(id)
-                      .update({'title': editcontroller.text.toString()}).then(
-                    (value) {
-                      Utils().toastMessage('Data updated succesfully');
-                    },
-                  ).onError(
-                    (error, stackTrace) {
-                      Utils().toastMessage(error.toString());
-                    },
-                  );
-                },
-                child: Text('Update'))
+              onPressed: () {
+                Navigator.pop(context);
+                ref
+                    .child(id)
+                    .update({'title': editcontroller.text.toString()}).then(
+                  (value) {
+                    Utils().toastMessage('Data updated succesfully');
+                  },
+                ).onError(
+                  (error, stackTrace) {
+                    Utils().toastMessage(error.toString());
+                  },
+                );
+              },
+              child: Text('Update'),
+            )
           ],
         );
       },

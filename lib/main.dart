@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:testappfirebase/CourseContents/add_coursecontents_real.dart';
+import 'package:testappfirebase/CourseContents/get_coursecontent_real.dart';
+import 'package:testappfirebase/CourseContents/get_tablelist.dart';
+import 'package:testappfirebase/CourseContents/testfile.dart';
 import 'package:testappfirebase/PaymentGateway/razorpay_payment.dart';
 import 'package:testappfirebase/Youtubevideo/youtube_video.dart';
 import 'package:testappfirebase/firebase_options.dart';
@@ -23,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(title: 'Flutter Demo', 
-    home: SplashScreen(),);
+    home: TestScreen(),);
   }
 }
 // test id rzp_test_tyxaS4GuEkyx6N
