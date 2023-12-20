@@ -6,12 +6,14 @@ import 'package:testappfirebase/CourseContents/get_tablelist.dart';
 import 'package:testappfirebase/CourseContents/new_subjectList.dart';
 import 'package:testappfirebase/CourseContents/lecture_list.dart';
 import 'package:testappfirebase/CourseContents/testfile.dart';
+import 'package:testappfirebase/Courses/allcourses.dart';
 import 'package:testappfirebase/PaymentGateway/razorpay_payment.dart';
 import 'package:testappfirebase/Youtubevideo/youtube_video.dart';
 import 'package:testappfirebase/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:testappfirebase/pdfviewer/pdfview.dart';
 import 'package:testappfirebase/ui/auth/signupnew.dart';
+import 'package:testappfirebase/ui/firestore/firestore_list_screen.dart';
 import 'package:testappfirebase/ui/splash_screen.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 

@@ -19,6 +19,7 @@ class ChildItem {
 
 class LectureList extends StatelessWidget {
   final String subject;
+  final String coursename;
   final textcontroller = TextEditingController();
   late DatabaseReference _databaseReference;
   // .child('Maths')
@@ -29,9 +30,9 @@ class LectureList extends StatelessWidget {
     return _databaseReference.onValue;
   }
 
-  LectureList({Key? key, required this.subject}) : super(key: key) {
+  LectureList({Key? key, required this.subject, required this.coursename}) : super(key: key) {
     _databaseReference = FirebaseDatabase.instance
-        .ref('Course1')
+        .ref(coursename)
         .child('SUBJECTS')
         .child(subject)
         .child('Videos');
@@ -81,20 +82,27 @@ class LectureList extends StatelessWidget {
                         child: ListTile(
                           title: Text(child.key),
                           subtitle: Text(child.value['Video Link'].toString()),
-                          trailing: InkWell(child: Icon(Icons.delete),
-                          onTap: () {
-                             _databaseReference .child(
-                                          snapshot.child('id').value.toString())
-                                      .remove();
-                          },),
-                          
+                          trailing: InkWell(
+                            child: Icon(Icons.delete),
+                            onTap: () {
+                              _databaseReference
+                                  .child(snapshot.child('id').value.toString())
+                                  .remove();
+                            },
+                          ),
+
                           onTap: () {
                             Navigator.push(
-                              context,MaterialPageRoute(builder: (context) => LectureVideoPlayer(
-                                videoURL: child.value['Video Link'].toString(), 
-                                videoTitle: child.value['Title'].toString(),
-                                 videoSubtitle: child.value['Subtitle'].toString()),)
-                            );
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LectureVideoPlayer(
+                                      videoURL:
+                                          child.value['Video Link'].toString(),
+                                      videoTitle:
+                                          child.value['Title'].toString(),
+                                      videoSubtitle:
+                                          child.value['Subtitle'].toString()),
+                                ));
                           },
                           // Display the value or any child property
                         ),

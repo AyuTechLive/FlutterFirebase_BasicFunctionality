@@ -95,11 +95,9 @@ class _FireStoreScreenState extends State<FireStoreScreen> {
                       ref
                           .doc(snapshot.data!.docs[index]['Email'].toString())
                           .update({'Password': 'NewPasswordUpdates'});
-                      ref
-                          .doc(snapshot.data!.docs[index].id.toString())
-                          .delete(
-                            
-                          );
+                      // ref
+                      //     .doc(snapshot.data!.docs[index].id.toString())
+                      //     .delete();
                     },
                     title: Text(snapshot.data!.docs[index].id.toString()),
                   );
@@ -111,4 +109,6 @@ class _FireStoreScreenState extends State<FireStoreScreen> {
       ),
     );
   }
+
+ 
 }

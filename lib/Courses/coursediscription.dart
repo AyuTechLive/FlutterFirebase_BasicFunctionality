@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:testappfirebase/Courses/allcourses.dart';
 import 'package:testappfirebase/utils/utils.dart';
 import 'package:testappfirebase/widgets/round_button.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -40,9 +41,8 @@ class _CourseDetailsState extends State<CourseDetails> {
     // Do something when payment succeeds
     Utils().toastMessage(response.paymentId.toString());
 
-    ref.doc(auth.currentUser!.email.toString()).update({
-      'UID':"1234567"
-    });
+   // ref.doc(auth.currentUser!.email.toString()).update({'UID': "1234567"});
+    searchAndCreateCourse1(widget.coursename);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -94,5 +94,48 @@ class _CourseDetailsState extends State<CourseDetails> {
         ],
       ),
     );
+  }
+
+  Future<void> searchAndCreateCourse1(String coursename) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String usersCollectionPath = 'Users'; // The collection name
+    String userEmailsDocumentId =
+        auth.currentUser!.email.toString(); // The document name
+    String courseFieldKey =
+        coursename; // The field key for the course data within the emails document
+
+    // Reference to the emails document in the users collection
+    DocumentReference emailsDocumentRef =
+        firestore.collection(usersCollectionPath).doc(userEmailsDocumentId);
+
+    try {
+      DocumentSnapshot emailsSnapshot = await emailsDocumentRef.get();
+
+      if (emailsSnapshot.exists) {
+        Map<String, dynamic> emailsData =
+            emailsSnapshot.data() as Map<String, dynamic>;
+
+        if (emailsData.containsKey(courseFieldKey) &&
+            emailsData[courseFieldKey] is List) {
+          List<dynamic> courseList = emailsData[courseFieldKey];
+          if (courseList[0] == 0) {
+            await emailsDocumentRef.update({
+              courseFieldKey: [2],
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AllCoursesScreen(),
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      // Handle any errors
+      print('Error occurred: $e');
+      // You might want to handle this error case or log it accordingly
+      // For instance, showing an error dialog or navigating back
+    }
   }
 }

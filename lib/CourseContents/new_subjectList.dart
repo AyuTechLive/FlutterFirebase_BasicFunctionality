@@ -14,13 +14,14 @@ class ChildItem {
       : key = snapshot.key!,
         value = snapshot.value;
 
-  // Add any other relevant methods and properties for your data model
+  // Add any oth
+  //initer relevant methods and properties for your data model
 }
 
 class NewSubjectList extends StatelessWidget {
+  final String coursename;
   final textcontroller = TextEditingController();
-  final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.ref('Course1').child('SUBJECTS');
+  late DatabaseReference _databaseReference;
   // .child('Maths')
   // .child('Videos');
 
@@ -29,10 +30,12 @@ class NewSubjectList extends StatelessWidget {
     return _databaseReference.onValue;
   }
 
-  NewSubjectList({super.key});
+  NewSubjectList({super.key, required this.coursename});
 
   @override
+  
   Widget build(BuildContext context) {
+    _databaseReference=FirebaseDatabase.instance.ref(coursename).child('SUBJECTS');
     return Scaffold(
       appBar: AppBar(
         title: Text('New Subject List'),
@@ -74,8 +77,7 @@ class NewSubjectList extends StatelessWidget {
                           trailing: InkWell(
                             child: Icon(Icons.delete),
                             onTap: () {
-                              _databaseReference
-                                  .child(child.key).remove();
+                              _databaseReference.child(child.key).remove();
                             },
                           ),
                           onTap: () {
@@ -83,7 +85,7 @@ class NewSubjectList extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      LectureList(subject: child.key),
+                                      LectureList(subject: child.key,coursename: coursename,),
                                 ));
                           },
                           // Display the value or any child property

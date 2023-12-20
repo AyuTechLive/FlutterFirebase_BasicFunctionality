@@ -24,7 +24,7 @@ class SplashServices {
       );
     } else {
       Timer(
-        const Duration(seconds: 3),
+        const Duration(seconds: 5),
         () => Navigator.push(
             context,
             MaterialPageRoute(
