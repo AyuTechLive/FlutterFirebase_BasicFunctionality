@@ -101,7 +101,7 @@ class _SignUpNewState extends State<SignUpNew> {
                       'Email':emailcontroller.text.toString(),
                       'Password':passwordcontroller.text.toString(),
                       'UID':DateTime.now().microsecondsSinceEpoch.toString(),
-                      'My Courses':['Course1','Course2','Course3']
+                      'My Courses':[]
                     }).then((value) {
                       setState(() {
                       loading = false;

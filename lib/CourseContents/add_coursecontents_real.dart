@@ -94,6 +94,7 @@ class _AddCourseContentRealTimeState extends State<AddCourseContentRealTime> {
                       .child('SUBJECTS')
                       .child(subjectcontroller.text.toString())
                      .child('Videos').child(videolectureno.text.toString()).set({
+                      'id':videolectureno.text.toString(),
                       'Title':videotitlecontroller.text.toString(),
                       'Subtitle':videosubtitlecontroller.text.toString(),
                       'Video Link':videourlcontroller.text.toString()

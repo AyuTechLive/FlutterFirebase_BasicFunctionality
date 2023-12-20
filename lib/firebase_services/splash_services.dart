@@ -19,7 +19,7 @@ class SplashServices {
         () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PostScreen(),
+              builder: (context) => AllCoursesScreen(),
             )),
       );
     } else {

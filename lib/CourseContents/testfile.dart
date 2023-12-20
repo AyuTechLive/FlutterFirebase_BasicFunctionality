@@ -45,7 +45,7 @@ class ChildList extends StatelessWidget {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance
       .ref('Course1')
       .child('SUBJECTS')
-      .child('Business Administration')
+      .child('Maths')
       .child('Videos');
 
   Stream<DatabaseEvent> getChildrenStream() {
@@ -74,7 +74,20 @@ class ChildList extends StatelessWidget {
                 sizeFactor: animation,
                 child: ListTile(
                   title: Text(child.key),
-                  subtitle: Text(child.value['Video Link'].toString()), // Display the value or any child property
+                  subtitle: Text(child.value['Video Link'].toString()),
+                  trailing: Icon(
+                    Icons.delete,
+                  ),
+                  onTap: () {
+                    //  _databaseReference .child(
+                    //                       snapshot.child('id').value.toString())
+                    //                   .remove();
+                    _databaseReference
+                        .child(snapshot.child('id').value.toString())
+                        .update({'Title': 'updated title'});
+                  },
+
+                  // Display the value or any child property
                 ),
               );
             },
