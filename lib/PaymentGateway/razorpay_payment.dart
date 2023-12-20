@@ -52,7 +52,7 @@ class _RaxorpayPaymentState extends State<RaxorpayPayment> {
             title: 'Buy',
             onTap: () {
               var options = {
-                'key': 'rzp_test_tyxaS4GuEkyx6N',
+                'key':'rzp_live_dM34iMfgEsA47k' ,  //'rzp_test_tyxaS4GuEkyx6N',
                 'amount': 1 * 100, //in the smallest currency sub-unit.
                 'name': 'Acme Corp.', // Generate order_id using Orders API
                 'description': 'Fine T-Shirt',

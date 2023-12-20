@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:testappfirebase/Courses/add_coursecontents_afteraddcourse.dart';
 import 'package:testappfirebase/utils/utils.dart';
 import 'package:testappfirebase/widgets/round_button.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -37,8 +38,7 @@ class _AddCourseState extends State<AddCourse> {
                 controller: coursenamecontroller,
                 maxLines: 1,
                 decoration: InputDecoration(
-                    hintText: 'Course Name',
-                    border: OutlineInputBorder()),
+                    hintText: 'Course Name', border: OutlineInputBorder()),
               ),
               TextFormField(
                 controller: coursediscriptioncontroller,
@@ -51,8 +51,7 @@ class _AddCourseState extends State<AddCourse> {
                 controller: coursepricecontroller,
                 maxLines: 1,
                 decoration: InputDecoration(
-                    hintText: 'Course Price',
-                    border: OutlineInputBorder()),
+                    hintText: 'Course Price', border: OutlineInputBorder()),
               ),
               TextFormField(
                 controller: courseimglinkcontroller,
@@ -66,7 +65,7 @@ class _AddCourseState extends State<AddCourse> {
               ),
               RoundButton(
                 loading: loading,
-                title: 'Add',
+                title: 'Next',
                 onTap: () {
                   setState(() {
                     loading = true;
@@ -75,15 +74,24 @@ class _AddCourseState extends State<AddCourse> {
                   //String id = 'ayushshahi96kmr@gmail.com';
                   fireStore.doc(id).set({
                     'Course Name': coursenamecontroller.text.toString(),
-                    'Course Discription': coursediscriptioncontroller.text.toString(),
-                    'Course Price':coursepricecontroller.text,
-                    'Course Img Link':courseimglinkcontroller.text.toString()
+                    'Course Discription':
+                        coursediscriptioncontroller.text.toString(),
+                    'Course Price': coursepricecontroller.text,
+                    'Course Img Link': courseimglinkcontroller.text.toString()
                   }).then(
                     (value) {
-                      Utils().toastMessage('Data Added');
+                      Utils().toastMessage('Course Created Successfully Now Add the course contents');
                       setState(() {
                         loading = false;
                       });
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AddCourseContentAfterAddingCourse(
+                                    coursename:
+                                        coursenamecontroller.text.toString()),
+                          ));
                     },
                   ).onError(
                     (error, stackTrace) {
